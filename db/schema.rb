@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_21_012119) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_21_065420) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -31,6 +31,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_21_012119) do
   create_table "posts", primary_key: "post_id", id: :string, force: :cascade do |t|
     t.text "content", null: false
     t.datetime "created_at", null: false
+    t.string "dislike_user_ids", default: [], array: true
     t.string "embedUrl"
     t.string "like_user_ids", default: [], array: true
     t.string "title", null: false
