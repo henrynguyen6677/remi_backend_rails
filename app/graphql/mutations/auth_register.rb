@@ -2,12 +2,12 @@
 
 module Mutations
   class AuthRegister < BaseMutation
-    argument :email, String, required: true
-    argument :password, String, required: true
+    argument :input, Types::RegisterInputInputType, required: true
     type Types::AuthenticateResponseType
 
-    def resolve(email:, password:)
-      email = email.downcase.strip
+    def resolve(input:)
+      email = input.email.downcase.strip
+      password = input.password
       if User.exists?(email: email)     
         raise GraphQL::ExecutionError, "ERROR_USER_HAS_EXIST"
       end

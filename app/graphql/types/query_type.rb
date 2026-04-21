@@ -19,7 +19,7 @@ module Types
     end
 
     field "auth_authenticate", resolver: Queries::AuthAuthenticate
-    # field "posts", resolver: Queries::PostsQuery            # Phase 4
-    # field "users_getProfile", resolver: Queries::UsersGetProfile  # Phase 4
+    field "posts", resolver: Queries::PostsQuery
+    field "users_getProfile", resolver: Queries::UsersGetProfile
   end
 end

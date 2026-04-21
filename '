@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+module Mutations
+  class CreatePost < Mutations::BaseMutation
+    argument :youtube_url, String, required: true, as: :youtubeUrl
+    type Types::PostResponseType
+
+    def resolve(youtube_ur:)
+      user = context[:current_user]
+      raise GraphQL::ExecutionError, "Unauthorized" unless user
+
+regex = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/
+      match = youtube_url.match(regex)
+      post_id = match ? match[1] : nil
+      if post_id.blank?
+        raise GraphQL::ExecutionError, "ERROR_INVALID_YOUTUBE_URL"
+      end
+      embed_url = "https://www.youtube.com/embed/#{post_id}"
+    end
+  end
+end

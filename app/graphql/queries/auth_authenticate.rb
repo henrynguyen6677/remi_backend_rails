@@ -9,7 +9,6 @@ module Queries
         raise GraphQL::ExecutionError, "ERROR_WRONG_PASSWORD"
       end
       token = JwtService.encode({ userId: user.user_id, email: user.email })
-      pp token
       {
         access_token: token,
         email: user.email,

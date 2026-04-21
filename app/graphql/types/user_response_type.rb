@@ -2,7 +2,7 @@
 
 module Types
   class UserResponseType < Types::BaseObject
-    field :use_id, Float, null: false
+    field :user_id, Float, null: false
     field :email, String, null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
   end

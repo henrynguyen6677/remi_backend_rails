@@ -10,9 +10,21 @@ class GraphqlController < ApplicationController
     variables = prepare_variables(params[:variables])
     query = params[:query]
     operation_name = params[:operationName]
+
+    current_user = nil
+    auth_header = request.headers["Authorization"]
+    if auth_header.present?
+      token = auth_header.split(" ").last
+      begin
+        payload = JwtService.decode(token)
+        current_user = User.find_by(user_id: payload[:userId])
+      rescue StandardError => e
+        raise GraphQL::ExecutionError, "ERROR_INVALID_TOKEN"
+      end
+    end
+
     context = {
-      # Query context goes here, for example:
-      # current_user: current_user,
+      current_user: current_user,
     }
     result = BackendRailsSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
