@@ -18,14 +18,8 @@ module Types
       ids.map { |id| context.schema.object_from_id(id, context) }
     end
 
-    # Add root-level fields here.
-    # They will be entry points for queries on your schema.
-
-    # TODO: remove me
-    field :test_field, String, null: false,
-      description: "An example field added by the generator"
-    def test_field
-      "Hello World!"
-    end
+    field "auth_authenticate", resolver: Queries::AuthAuthenticate
+    # field "posts", resolver: Queries::PostsQuery            # Phase 4
+    # field "users_getProfile", resolver: Queries::UsersGetProfile  # Phase 4
   end
 end
