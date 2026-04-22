@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class AuthenticateInputInputType < Types::BaseInputObject
+  class AuthenticateInputType < Types::BaseInputObject
     argument :email, String, required: true
     argument :password, String, required: true
   end

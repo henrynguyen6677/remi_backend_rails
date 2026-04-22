@@ -1,6 +1,6 @@
 module Queries
   class AuthAuthenticate < GraphQL::Schema::Resolver
-    argument :input, Types::AuthenticateInputInputType, required: true
+    argument :input, Types::AuthenticateInputType, required: true
     type Types::AuthenticateResponseType, null: false
 
     def resolve(input:)
