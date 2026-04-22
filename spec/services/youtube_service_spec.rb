@@ -29,32 +29,46 @@ RSpec.describe YoutubeService do
     end
   end
 
-  describe ".fetch_oembed" do
-    it "returns parsed JSON on success" do
-      body = { "title" => "Test", "author_name" => "Author" }.to_json
-      stub_request(:get, /youtube\.com\/oembed/)
-        .to_return(status: 200, body: body, headers: { "Content-Type" => "application/json" })
-
-      result = described_class.fetch_oembed("dQw4w9WgXcQ")
-      expect(result["title"]).to eq("Test")
-      expect(result["author_name"]).to eq("Author")
+  describe ".fetch_video_info" do
+    let(:success_body) do
+      {
+        "items" => [
+          {
+            "snippet" => {
+              "title" => "Test Video",
+              "description" => "A test video description",
+              "channelTitle" => "TestChannel"
+            }
+          }
+        ]
+      }.to_json
     end
 
-    it "raises ERROR_VIDEO_RESTRICTED on 401" do
-      stub_request(:get, /youtube\.com\/oembed/)
-        .to_return(status: 401, body: "Unauthorized")
+    it "returns title, description, and channel_title on success" do
+      stub_request(:get, /googleapis\.com\/youtube\/v3\/videos/)
+        .to_return(status: 200, body: success_body, headers: { "Content-Type" => "application/json" })
+
+      result = described_class.fetch_video_info("dQw4w9WgXcQ")
+      expect(result[:title]).to eq("Test Video")
+      expect(result[:description]).to eq("A test video description")
+      expect(result[:channel_title]).to eq("TestChannel")
+    end
+
+    it "raises ERROR_VIDEO_RESTRICTED on HTTP error" do
+      stub_request(:get, /googleapis\.com\/youtube\/v3\/videos/)
+        .to_return(status: 403, body: "Forbidden")
 
       expect {
-        described_class.fetch_oembed("private_video")
+        described_class.fetch_video_info("private_video")
       }.to raise_error(GraphQL::ExecutionError, "ERROR_VIDEO_RESTRICTED")
     end
 
-    it "raises ERROR_VIDEO_RESTRICTED on 404" do
-      stub_request(:get, /youtube\.com\/oembed/)
-        .to_return(status: 404, body: "Not Found")
+    it "raises ERROR_VIDEO_RESTRICTED when items array is empty" do
+      stub_request(:get, /googleapis\.com\/youtube\/v3\/videos/)
+        .to_return(status: 200, body: { "items" => [] }.to_json, headers: { "Content-Type" => "application/json" })
 
       expect {
-        described_class.fetch_oembed("deleted_video")
+        described_class.fetch_video_info("deleted_video")
       }.to raise_error(GraphQL::ExecutionError, "ERROR_VIDEO_RESTRICTED")
     end
   end

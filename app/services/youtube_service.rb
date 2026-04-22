@@ -4,6 +4,7 @@ require "net/http"
 
 class YoutubeService
   YOUTUBE_REGEX = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|&v(?:i)?=))([^#&?]*).*/
+  API_KEY = ENV.fetch("YOUTUBE_API_KEY", "")
 
   # Extracts the video ID from a YouTube URL.
   # Returns nil if the URL is not a valid YouTube URL.
@@ -12,17 +13,30 @@ class YoutubeService
     match ? match[1] : nil
   end
 
-  # Fetches video metadata (title, author) from YouTube oEmbed API.
+  # Fetches video metadata from YouTube Data API v3.
+  # Returns a hash with title, description, and channel_title.
   # Raises specific error codes on failure.
-  def self.fetch_oembed(video_id)
-    uri = URI("https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=#{video_id}&format=json")
+  def self.fetch_video_info(video_id)
+    uri = URI("https://www.googleapis.com/youtube/v3/videos?id=#{video_id}&key=#{API_KEY}&part=snippet")
     response = Net::HTTP.get_response(uri)
 
     unless response.is_a?(Net::HTTPSuccess)
       raise GraphQL::ExecutionError, "ERROR_VIDEO_RESTRICTED"
     end
 
-    JSON.parse(response.body)
+    parsed = JSON.parse(response.body)
+    items = parsed["items"]
+
+    if items.nil? || items.empty?
+      raise GraphQL::ExecutionError, "ERROR_VIDEO_RESTRICTED"
+    end
+
+    snippet = items.first["snippet"]
+    {
+      title: snippet["title"],
+      description: snippet["description"] || "",
+      channel_title: snippet["channelTitle"] || ""
+    }
   end
 
   # Builds embed URL from a video ID.

@@ -13,9 +13,9 @@ module Mutations
       video_id = YoutubeService.extract_video_id(youtube_url)
       raise GraphQL::ExecutionError, "ERROR_INVALID_YOUTUBE_URL" if video_id.blank?
 
-      oembed = YoutubeService.fetch_oembed(video_id)
-      title = oembed["title"]
-      content = oembed["author_name"] ? "Video by #{oembed["author_name"]}" : ""
+      video_info = YoutubeService.fetch_video_info(video_id)
+      title = video_info[:title]
+      content = video_info[:description]
 
       post = Post.find_or_initialize_by(post_id: video_id)
       post.update!(
