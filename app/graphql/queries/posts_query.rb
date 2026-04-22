@@ -2,7 +2,7 @@
 
 module Queries
   class PostsQuery < GraphQL::Schema::Resolver
-    argument :find_all_input, Types::FindAllInputInputType, required: false
+    argument :find_all_input, Types::FindAllInputType, required: false
     type [Types::PostResponseType], null: false
 
     def resolve(find_all_input: nil)

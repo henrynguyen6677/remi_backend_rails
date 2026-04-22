@@ -4,7 +4,7 @@ require 'net/http'
 
 module Mutations
   class CreatePost < Mutations::BaseMutation
-    argument :create_post_input, Types::CreatePostInputInputType, required: true
+    argument :create_post_input, Types::CreatePostInputType, required: true
     type Types::PostResponseType
 
     def resolve(create_post_input:)
@@ -38,7 +38,14 @@ module Mutations
         url: youtube_url,
         user_id: user.user_id
        )
-
+      # Broadcast the new post to all subscribers for room BTC
+      ActionCable.server.broadcast(
+        "notifications_BTC",
+        {
+          title: title,
+          email: user.email,
+        }
+      )
       post
     end
   end

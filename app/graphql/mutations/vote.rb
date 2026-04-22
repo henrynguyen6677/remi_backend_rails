@@ -2,7 +2,7 @@
 
 module Mutations
   class Vote < Mutations::BaseMutation
-    argument :create_vote_input, Types::CreateVoteInputInputType, required: true
+    argument :create_vote_input, Types::CreateVoteInputType, required: true
 
     type Types::PostResponseType
     
