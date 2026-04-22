@@ -37,7 +37,7 @@ gem "rack-cors"
 
 gem "graphql", "~>2.4"
 
-gem "jwt", "~> 2.9"
+gem "jwt", "~> 3.1"
 
 gem "sidekiq", "~> 7.3"
 
