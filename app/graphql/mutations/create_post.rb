@@ -24,7 +24,7 @@ module Mutations
       response = Net::HTTP.get_response(uri)
       
       unless response.is_a?(Net::HTTPSuccess)
-        raise GraphQL::ExecutionError, "Failed to parse YouTube oEmbed response"
+        raise GraphQL::ExecutionError, "ERROR_VIDEO_RESTRICTED"
       end
       parsed = JSON.parse(response.body)
       title = parsed["title"]

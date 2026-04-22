@@ -2,7 +2,7 @@
 
 module Mutations
   class AuthRegister < BaseMutation
-    argument :input, Types::RegisterInputInputType, required: true
+    argument :input, Types::RegisterInputType, required: true
     type Types::AuthenticateResponseType
 
     def resolve(input:)

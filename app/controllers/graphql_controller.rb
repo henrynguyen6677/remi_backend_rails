@@ -19,7 +19,6 @@ class GraphqlController < ApplicationController
         payload = JwtService.decode(token)
         current_user = User.find_by(user_id: payload[:userId])
       rescue StandardError => e
-        raise GraphQL::ExecutionError, "ERROR_INVALID_TOKEN"
       end
     end
 
