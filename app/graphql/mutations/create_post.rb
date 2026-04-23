@@ -9,29 +9,36 @@ module Mutations
       user = context[:current_user]
       raise ApiErrors::Error, ApiErrors::UNAUTHORIZED unless user
 
-      youtube_url = create_post_input.youtube_url
+      post = create_and_save_post(create_post_input.youtube_url, user)
+      broadcast_notification(post, user)
+
+      post
+    end
+
+    private
+
+    def create_and_save_post(youtube_url, user)
       video_id = YoutubeService.extract_video_id(youtube_url)
       raise ApiErrors::Error, ApiErrors::INVALID_YOUTUBE_URL if video_id.blank?
 
       video_info = YoutubeService.fetch_video_info(video_id)
-      title = video_info[:title]
-      content = video_info[:description]
 
-      post = Post.find_or_initialize_by(post_id: video_id)
-      post.update!(
-        title: title,
-        content: content,
-        embedUrl: YoutubeService.embed_url(video_id),
-        url: youtube_url,
-        user_id: user.user_id
-      )
+      Post.find_or_initialize_by(post_id: video_id).tap do |post|
+        post.update!(
+          title: video_info[:title],
+          content: video_info[:description],
+          embedUrl: YoutubeService.embed_url(video_id),
+          url: youtube_url,
+          user_id: user.user_id
+        )
+      end
+    end
 
+    def broadcast_notification(post, user)
       ActionCable.server.broadcast(
         "notifications_BTC",
-        { title: title, email: user.email }
+        { title: post.title, email: user.email }
       )
-
-      post
     end
   end
 end
