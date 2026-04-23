@@ -17,18 +17,23 @@ class YoutubeService
   # Returns a hash with title, description, and channel_title.
   # Raises specific error codes on failure.
   def self.fetch_video_info(video_id)
-    uri = URI("https://www.googleapis.com/youtube/v3/videos?id=#{video_id}&key=#{API_KEY}&part=snippet")
-    response = Net::HTTP.get_response(uri)
+    begin
+      uri = URI("https://www.googleapis.com/youtube/v3/videos?id=#{video_id}&key=#{API_KEY}&part=snippet")
+      response = Net::HTTP.get_response(uri)
 
-    unless response.is_a?(Net::HTTPSuccess)
-      raise GraphQL::ExecutionError, "ERROR_VIDEO_RESTRICTED"
-    end
+      unless response.is_a?(Net::HTTPSuccess)
+        raise ApiErrors::Error, ApiErrors::VIDEO_RESTRICTED
+      end
 
-    parsed = JSON.parse(response.body)
-    items = parsed["items"]
+      parsed = JSON.parse(response.body)
+      items = parsed["items"]
 
-    if items.nil? || items.empty?
-      raise GraphQL::ExecutionError, "ERROR_VIDEO_RESTRICTED"
+      if items.nil? || items.empty?
+        raise ApiErrors::Error, ApiErrors::VIDEO_RESTRICTED
+      end
+    rescue StandardError => e
+      Rails.logger.error("YouTube API fetching failed: #{e.message}")
+      raise ApiErrors::Error, ApiErrors::VIDEO_RESTRICTED
     end
 
     snippet = items.first["snippet"]
