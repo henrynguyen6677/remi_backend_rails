@@ -7,7 +7,11 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins "http://localhost:3000"
+    if Rails.env.development? || Rails.env.test?
+      origins "http://localhost:3000", "http://localhost:8080", "http://localhost:9090", "http://localhost:8020"
+    else
+      origins ENV.fetch("CORS_ORIGINS", "").split(",").map(&:strip)
+    end
 
     resource "*",
       headers: :any,
