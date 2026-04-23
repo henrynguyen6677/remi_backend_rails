@@ -9,7 +9,11 @@ module Mutations
       email = input.email.downcase.strip
       password = input.password
       if User.exists?(email: email)     
-        raise GraphQL::ExecutionError, "ERROR_USER_HAS_EXIST"
+        raise ApiErrors::Error, ApiErrors::USER_HAS_EXIST
+      end
+
+      if password.length < 6
+        raise ApiErrors::Error, ApiErrors::PASSWORD_TOO_SHORT
       end
 
       user = User.create!(

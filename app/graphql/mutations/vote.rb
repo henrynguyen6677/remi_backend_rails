@@ -8,10 +8,10 @@ module Mutations
     
     def resolve(create_vote_input:)
       user = context[:current_user]
-      raise GraphQL::ExecutionError, "Unauthorized" unless user
+      raise ApiErrors::Error, ApiErrors::UNAUTHORIZED unless user
 
       post = Post.find(create_vote_input.post_id)
-      raise GraphQL::ExecutionError, "Post not found" unless post
+      raise ApiErrors::Error, ApiErrors::POST_NOT_FOUND unless post
 
       vote_type = create_vote_input.vote 
       user_id_str = user.user_id.to_s

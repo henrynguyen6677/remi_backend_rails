@@ -7,11 +7,11 @@ module Mutations
 
     def resolve(create_post_input:)
       user = context[:current_user]
-      raise GraphQL::ExecutionError, "Unauthorized" unless user
+      raise ApiErrors::Error, ApiErrors::UNAUTHORIZED unless user
 
       youtube_url = create_post_input.youtube_url
       video_id = YoutubeService.extract_video_id(youtube_url)
-      raise GraphQL::ExecutionError, "ERROR_INVALID_YOUTUBE_URL" if video_id.blank?
+      raise ApiErrors::Error, ApiErrors::INVALID_YOUTUBE_URL if video_id.blank?
 
       video_info = YoutubeService.fetch_video_info(video_id)
       title = video_info[:title]
