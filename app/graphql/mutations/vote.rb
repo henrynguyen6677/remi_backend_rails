@@ -17,14 +17,14 @@ module Mutations
       user_id_str = user.user_id.to_s
       like_ids = post.like_user_ids || []
       dislike_ids = post.dislike_user_ids || []
-      if vote_type == "UP"
+      if ["UP", "SELF_VOTE_UP"].include?(vote_type)
         if like_ids.include?(user_id_str)
           like_ids.delete(user_id_str)
         else
           like_ids << user_id_str
           dislike_ids.delete(user_id_str)
         end
-      elsif vote_type == "DOWN"
+      elsif ["DOWN", "SELF_VOTE_DOWN"].include?(vote_type)
         if dislike_ids.include?(user_id_str)
           dislike_ids.delete(user_id_str)
         else
