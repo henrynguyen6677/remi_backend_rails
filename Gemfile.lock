@@ -146,7 +146,7 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.19.4)
-    jwt (2.10.2)
+    jwt (3.1.2)
       base64
     kamal (2.11.0)
       activesupport (>= 7.0)
@@ -406,7 +406,7 @@ DEPENDENCIES
   factory_bot_rails (~> 6.4)
   graphql (~> 2.4)
   image_processing (~> 1.2)
-  jwt (~> 2.9)
+  jwt (~> 3.1)
   kamal
   pg (~> 1.1)
   puma (>= 5.0)
