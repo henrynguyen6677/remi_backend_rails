@@ -14,19 +14,7 @@ module Types
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
 
     def vote
-      user_id = context[:current_user]&.user_id&.to_s
-      like_ids = object.like_user_ids || []
-      dislike_ids = object.dislike_user_ids || []
-      self_vote_status = ""
-      if user_id.present?
-        self_vote_status = "UP" if like_ids.include?(user_id)
-        self_vote_status = "DOWN" if dislike_ids.include?(user_id)
-      end
-      {
-        up: like_ids.size,
-        down: dislike_ids.size, 
-        self_vote_status: self_vote_status
-      }
+      object.vote_summary(context[:current_user]&.user_id)
     end
 
   end
