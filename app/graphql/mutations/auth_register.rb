@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Mutations
   class AuthRegister < BaseMutation
     argument :input, Types::RegisterInputType, required: true
@@ -8,18 +6,22 @@ module Mutations
     def resolve(input:)
       email = input.email.downcase.strip
       password = input.password
-      if User.exists?(email: email)     
-        raise ApiErrors::Error, ApiErrors::USER_HAS_EXIST
-      end
+      existing_user = User.find_by(email: email)
+      if existing_user
+        unless BCrypt::Password.new(existing_user.password) == password
+          raise ApiErrors::Error, ApiErrors::INVALID_CREDENTIALS
+        end
+        user = existing_user
+      else
+        if password.length < 6
+          raise ApiErrors::Error, ApiErrors::PASSWORD_TOO_SHORT
+        end
 
-      if password.length < 6
-        raise ApiErrors::Error, ApiErrors::PASSWORD_TOO_SHORT
+        user = User.create!(
+          email: email,
+          password: BCrypt::Password.create(password),
+        )
       end
-
-      user = User.create!(
-        email: email,
-        password: BCrypt::Password.create(password),
-      )
       token = JwtService.encode({ userId: user.user_id, email: user.email })
 
       {

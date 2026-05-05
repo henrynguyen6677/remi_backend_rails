@@ -5,6 +5,7 @@ module ApiErrors
   VIDEO_RESTRICTED = { code: "ERROR_VIDEO_RESTRICTED", message: "This video is unavailable, private, or does not allow embedding." }
   UNAUTHORIZED = { code: "ERROR_UNAUTHORIZED", message: "You must be logged in to perform this action." }
   POST_NOT_FOUND = { code: "ERROR_POST_NOT_FOUND", message: "Post not found." }
+  INVALID_CREDENTIALS = { code: "ERROR_INVALID_CREDENTIALS", message: "Invalid credentials." }
 
   class Error < GraphQL::ExecutionError
     def initialize(error_obj)
