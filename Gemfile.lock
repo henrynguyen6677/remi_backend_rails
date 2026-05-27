@@ -129,7 +129,7 @@ GEM
       raabro (~> 1.4)
     globalid (1.3.0)
       activesupport (>= 6.1)
-    graphql (2.5.23)
+    graphql (2.6.3)
       base64
       fiber-storage
       logger
@@ -404,7 +404,7 @@ DEPENDENCIES
   debug
   dotenv-rails
   factory_bot_rails (~> 6.4)
-  graphql (~> 2.4)
+  graphql (~> 2.6)
   image_processing (~> 1.2)
   jwt (~> 2.9)
   kamal
