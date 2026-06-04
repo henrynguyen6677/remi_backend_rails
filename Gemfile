@@ -39,7 +39,7 @@ gem "graphql", "~>2.4"
 
 gem "jwt", "~> 2.9"
 
-gem "sidekiq", "~> 7.3"
+gem "sidekiq", "~> 8.1"
 
 gem "redis", "~> 5.3"
 
